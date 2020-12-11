@@ -1,11 +1,24 @@
-import collections
+from functools import lru_cache
 import math
+
+@lru_cache(maxsize=None)
+def adapterPath(adapter):
+    if adapter in data:
+        if adapter == data[0]:
+            return 1
+        elif adapter < 0:
+            return 0
+        else:
+            return adapterPath(adapter-1) + adapterPath(adapter-2) + adapterPath(adapter-3)
+    else:
+        return 0
 
 fin = open("input.txt", "r")
 data = list(map(lambda x: int(x.strip()), fin.readlines()))
 data.sort()
 lines = data
 
+#### PART 1
 oneDiff = 0
 twoDiff = 0
 threeDiff = 0
@@ -23,28 +36,6 @@ for jolt in data:
     previosJolt = jolt
 print(oneDiff * threeDiff)
 
-#### PART 2 IS CURRENTLY NOT WORKING. IT STILL NEEDS MORE WORK
-
-# data.remove(phoneJolt)
-# data.insert(0, 0)
-# twoBranches = 0
-# threeBranches = 0
-# i = 0
-# while i < len(data):
-#     currentJolt = data[i]
-#     branches = 0
-#     j = i + 1
-#     while j < len(data) and data[j] <= (currentJolt + 3):
-#         branches += 1
-#         j += 1
-#     if branches == 2:
-#         twoBranches += 1
-#     elif branches == 3:
-#         threeBranches += 1
-#     if (j-1) != i:
-#         i = j - 1
-#     else:
-#         i = j
-#print(twoBranches)
-#print(threeBranches)
-#print((twoBranches*2) * (threeBranches*4))
+#### PART 2
+data.insert(0, 0)
+print(adapterPath(data[-1]))
