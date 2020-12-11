@@ -58,5 +58,4 @@ while oldOccuCount != newOccuCount:
                 elif oldData[y][x] == "#" and neighbors >= 5:
                     newData[y][x] = "L"
     newOccuCount = sum(x.count("#") for x in newData)
-    print(newOccuCount)
 print(newOccuCount)
