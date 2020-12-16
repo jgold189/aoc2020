@@ -1,4 +1,5 @@
 # A lot of repeated operations throughout the code that should be cleaned up, but development speed is the name of the game here
+# Also a few hardcoded values in there to again speed up development time
 
 def checkRules(indexes, rule, correctTickets):
     possibleIndexes = indexes
@@ -48,7 +49,7 @@ for ticket in tickets:
             validTicket = False
     if validTicket:
         correctTickets.append(ticket)
-print(sum(errors))
+print("Part 1:", sum(errors))
 
 
 ruleIndexes = [[i for i in range(20)] for _ in range(len(allRules))]
@@ -73,4 +74,4 @@ result = 1
 myTicket = [int(x) for x in correctTickets[0].split(",")]
 for index in ruleIndexes[:6]:
     result *= myTicket[index[0]]
-print(result)
+print("Part 2:", result)
