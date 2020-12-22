@@ -1,10 +1,25 @@
 import numpy as np
-import sys
+import re
+from functools import reduce
+from collections import Counter
 
-def pprint(image):
-    for line in image:
-        print("".join(line))
-    print()
+def intersection(l1, l2):
+    temp = set(l2)
+    l3 = [value for value in l1 if value in temp]
+    return l3
+
+def findSeaMonsters(image):
+    topRegex = r"(?=(..................#.))"
+    midRegex = r"(?=(#....##....##....###))"
+    bottomRegex = r"(?=(.#..#..#..#..#..#...))"
+    count = 0
+    for i in range(1, len(image)-1, 1):
+        topMatches = [x.span() for x in re.finditer(topRegex, image[i-1])]
+        midMatches = [x.span() for x in re.finditer(midRegex, image[i])]
+        bottomMatches = [x.span() for x in re.finditer(bottomRegex, image[i+1])]
+        if topMatches != [] and midMatches != [] and bottomMatches != []:
+            count += len(reduce(intersection, [topMatches, midMatches, bottomMatches]))
+    return count
 
 def rotate(image, direction, times):
     newImage = np.array(image)
@@ -130,7 +145,32 @@ for tile in newTiles:
 finalImage = [[y for y in x if y != []] for x in finalImage if x != temp]
 print(finalImage[0][0][1] * finalImage[0][-1][1] * finalImage[-1][0][1] * finalImage[-1][-1][1])
 
+#### PART 2
+cleanImage = []
 for line in finalImage:
-    for image in line:
-        print(image[1], end=" ")
-    print()
+    cleanLine = []
+    for cell in line:
+        newCell = cell[0][1:-1]
+        newCell = newCell[::-1]
+        newCell = [x[1:-1] for x in newCell]
+        cleanLine.append(newCell)
+    cleanImage.append(cleanLine)
+
+fullCleanImage = []
+for line in cleanImage:
+    for i in range(len(line[0])):
+        fullLine = []
+        for image in line:
+            fullLine.extend(image[i])
+        fullCleanImage.append(fullLine)
+
+possibleImages = [fullCleanImage, flip(fullCleanImage,0), flip(fullCleanImage,1), rotate(fullCleanImage, "cw", 1), rotate(fullCleanImage, "cw", 2), rotate(fullCleanImage, "cw", 3), rotate(fullCleanImage, "ccw", 1), rotate(fullCleanImage, "ccw", 2), rotate(fullCleanImage, "ccw", 3), flip(rotate(fullCleanImage, "cw", 1),1), flip(rotate(fullCleanImage, "cw", 1),0), flip(rotate(fullCleanImage, "ccw", 1),1), flip(rotate(fullCleanImage, "ccw", 1),0)]
+counts = []
+for image in possibleImages:
+    joinedImage = ["".join(x) for x in image]
+    counts.append(findSeaMonsters(joinedImage))
+seaMonsters = max(counts)
+
+#A sea monster is made of 15 #'s
+total = sum([Counter(list(x))["#"] for x in fullCleanImage])
+print(total - (seaMonsters * 15))
